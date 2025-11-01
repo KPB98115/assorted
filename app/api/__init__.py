@@ -11,6 +11,6 @@ router.include_router(
 )
 router.include_router(
     image_router,
-    prefix="/image",
+    prefix="/album/image",
     tags=["image"]
 )

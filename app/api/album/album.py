@@ -11,11 +11,15 @@ router = APIRouter()
 
 @router.post("/create")
 async def create(name: AlbumCreateRequest) -> Album:
-    return await create_album(name)
+    result = await create_album(name)
+    if result is None:
+        raise HTTPException(status_code=500, detail="Fail to create album: album name exist.")
 
 @router.post("/get")
 async def get(id: AlbumGetRequest) -> Album:
-    return await get_album(id)
+    result = await get_album(id)
+    if result is None:
+        raise HTTPException(status_code=500, detail="Fail to get album")
 
 @router.post("/delete")
 async def delete(id: AlbumDeleteRequest) -> str:

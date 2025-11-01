@@ -4,7 +4,7 @@ import uuid
 from datetime import datetime
 
 
-async def create_album(name: str) -> Album:
+async def create_album(name: str) -> Album | None:
     # TODO Check if album name already exists
     # If exists, return album already exists error
     album = Album(
@@ -18,7 +18,7 @@ async def create_album(name: str) -> Album:
     
     return album
 
-async def get_album(id: str) -> Album:
+async def get_album(id: str) -> Album | None:
     # TODO: check if album id is not exist
     # If not exist, return album not exist error
 
