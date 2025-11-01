@@ -23,16 +23,16 @@ class ErrorMiddleware(BaseHTTPMiddleware):
                 except:
                     message = response_body.decode() if response_body else "Error"
 
-                error_response = {
-                    "error_code": response.status_code,
-                    "message": message
-                }
+                # error_response = {
+                #     "error_code": response.status_code,
+                #     "message": message
+                # }
 
                 new_headers = dict(response.headers)
                 new_headers.pop("content-length", None)
 
                 return JSONResponse(
-                    content=error_response,
+                    content=message,
                     status_code=response.status_code,
                     headers=new_headers
                 )

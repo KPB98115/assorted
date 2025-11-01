@@ -1,11 +1,10 @@
-from email.policy import HTTP
 from fastapi import APIRouter, Form, UploadFile, File, HTTPException
 from fastapi.responses import StreamingResponse
 from typing import Annotated
 from uuid import UUID
 
-from app.core.models.image import AllowedImageFormat, UploadImageParams, DeleteImageParams, GetImageParams
-from app.core.helper.image import upload_image, delete_image, get_image
+from core.models.image import AllowedImageFormat, UploadImageParams, DeleteImageParams, GetImageParams
+from core.helper.image import upload_image, delete_image, get_image, get_image_thumbnail
 
 router = APIRouter()
 
@@ -29,3 +28,10 @@ async def get(album_id: UUID, image_id: UUID):
     if isinstance(result, StreamingResponse):
         return result
     raise HTTPException(status_code=400, detail="Fail to get image")
+
+@router.post("/thumbnail/get")
+async def get_thumbnail(thumbnail_id: str):
+    result = await get_image_thumbnail(thumbnail_id)
+    if isinstance(result, StreamingResponse):
+        return result
+    raise HTTPException(status_code=400, detail="Fail to get thumbnail")

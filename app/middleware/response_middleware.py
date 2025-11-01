@@ -3,10 +3,14 @@ from starlette.middleware.base import BaseHTTPMiddleware
 from starlette.responses import JSONResponse
 import json
 
+DOC_PATHS = {"/docs", "/redoc", "/openapi.json", "/docs/oauth2-redirect"}
 
 class ResponseMiddleware(BaseHTTPMiddleware):
     async def dispatch(self, request: Request, call_next):
         response = await call_next(request)
+
+        if request.url.path in DOC_PATHS or request.url.path.startswith("/static"):
+            return response
 
         if response.headers.get("content-type", "").startswith("application/json"):
             response_body = b""

@@ -1,5 +1,5 @@
 from fastapi import Request
-from app.core.models.album import Album
+from core.models.album import Album
 import uuid
 from datetime import datetime
 

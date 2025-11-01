@@ -1,11 +1,11 @@
 from fastapi import APIRouter, HTTPException
-from app.core.models.album import (
+from core.models.album import (
     AlbumCreateRequest,
     AlbumDeleteRequest,
     AlbumGetRequest,
     Album,
 )
-from app.core.helper.album import create_album, get_album, delete_album
+from core.helper.album import create_album, get_album, delete_album
 
 router = APIRouter()
 

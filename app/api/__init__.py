@@ -1,6 +1,6 @@
 from fastapi import APIRouter
-from app.api.album.album import router as album_router
-from app.api.image.image import router as image_router
+from app.api.album import router as album_router
+from app.api.image import router as image_router
 
 router = APIRouter()
 
