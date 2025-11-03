@@ -1,5 +1,5 @@
 from pydantic import BaseModel
-from uuid import UUID
+from typing import Optional, Tuple
 from datetime import datetime
 
 class AlbumCreateRequest(BaseModel):
@@ -12,7 +12,10 @@ class AlbumDeleteRequest(BaseModel):
     id: str
 
 class Album(BaseModel):
-    id: UUID
+    _id: Optional[str] = None
     name: str
     create_date: datetime
-    content: list[UUID]
+    content: list[str]
+
+class AlbumOperationResult(BaseModel):
+    result: Optional[Tuple[bool, str]] = None

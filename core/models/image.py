@@ -1,13 +1,13 @@
+from typing import Optional
 from pydantic import BaseModel
-from uuid import UUID
 from datetime import datetime
 from fastapi import UploadFile
 
 class Thumbnail(BaseModel):
-    id: UUID
+    _id: str
 
 class Image(BaseModel):
-    id: UUID
+    _id: Optional[str] = None
     name: str
     create_date: datetime
     thumbnail: Thumbnail
@@ -15,18 +15,18 @@ class Image(BaseModel):
 AllowedImageFormat = {"image/jpeg", "image/png", "image/webp", "image/heif", "image/heic", "image/avif"}
 
 class UploadImageParams(BaseModel):
-    album_id: UUID
+    album_id: str
     image: UploadFile
 
 class UploadImageResponse(BaseModel):
     status: bool
-    job_id: UUID
+    job_id: str
 
 class DeleteImageParams(BaseModel):
-    album_id: UUID
-    image_id: UUID
+    album_id: str
+    image_id: str
 
 class GetImageParams(BaseModel):
-    album_id: UUID
-    image_id: UUID
+    album_id: str
+    image_id: str
 

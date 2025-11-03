@@ -10,7 +10,7 @@ class BaseMongoClient:
         self.uri = f"{os.getenv("MONGO_DB_HOST")}:{os.getenv("MONGO_DB_PORT")}"
         self.client = AsyncMongoClient(f"mongodb://{self.uri}")
         self.database = self.client.get_database(db_name)
-        self.connection = self.database.get_collection(coll_name)
+        self.collection = self.database.get_collection(coll_name)
         self.gridfs_bucket = None
 
     def init_bucket(self):
