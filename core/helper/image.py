@@ -1,6 +1,6 @@
 from fastapi.responses import StreamingResponse
 from core.models.image import UploadImageParams, UploadImageResponse, DeleteImageParams, GetImageParams
-from uuid import UUID
+from fastapi import UploadFile
 
 async def upload_image(params: UploadImageParams) -> UploadImageResponse:
     """

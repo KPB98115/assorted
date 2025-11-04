@@ -31,5 +31,11 @@ class ImageClient(BaseMongoClient):
     async def insertImageToBucket(image: UploadFile) -> bool:
         pass
 
+    async def deleteImageFromBucket(image_id: str) -> bool:
+        pass
+
     async def getImageById(id: str) -> Image:
+        pass
+
+    async def getImageByName(name: str) -> Image:
         pass
