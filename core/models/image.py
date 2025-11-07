@@ -1,16 +1,5 @@
-from typing import Optional
 from pydantic import BaseModel
-from datetime import datetime
 from fastapi import UploadFile
-
-class Thumbnail(BaseModel):
-    _id: str
-
-class Image(BaseModel):
-    _id: Optional[str] = None
-    name: str
-    create_date: datetime
-    thumbnail: Thumbnail
 
 AllowedImageFormat = {"image/jpeg", "image/png", "image/webp", "image/heif", "image/heic", "image/avif"}
 

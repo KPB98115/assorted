@@ -1,0 +1,55 @@
+version: '3.8'
+
+services:
+  # MongoDB service
+  mongodb:
+    image: mongo:7.0
+    container_name: album_mongodb
+    restart: unless-stopped
+    ports:
+      - "27017:27017"
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: ${MONGO_ROOT_USERNAME}
+      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_ROOT_PASSWORD}
+      MONGO_INITDB_DATABASE: album
+    volumes:
+      - album_db:/data/db
+      - album_db_config:/data/configdb
+    networks:
+      - album_network
+    healthcheck:
+      test: echo 'db.runCommand("ping").ok' | mongosh localhost:27017/test --quiet
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # FastAPI backend service
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: album_backend
+    restart: unless-stopped
+    ports:
+      - "8000:8000"
+    environment:
+      MONGO_DB_HOST: ${MONGO_ROOT_USERNAME}:${MONGO_ROOT_PASSWORD}@mongodb
+      MONGO_DB_PORT: 27017
+    depends_on:
+      mongodb:
+        condition: service_healthy
+    networks:
+      - album_network
+    volumes:
+      # Mount /tmp for temporary file storage during image conversion
+      - /tmp:/tmp
+
+networks:
+  album_network:
+    driver: bridge
+
+volumes:
+  album_db:
+    name: album_db
+  album_db_config:
+    name: album_db_config
