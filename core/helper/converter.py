@@ -47,7 +47,7 @@ class Job(BaseModel):
         return None
 
 class Converter:
-    def __init__(self, image_client=None, job_ttl_seconds: int = 3600):
+    def __init__(self, image_client=None, job_ttl_seconds: int = 3600, main_event_loop=None):
         self.temp_dir = "/tmp/image_converter"
         os.makedirs(self.temp_dir, exist_ok=True)
 
@@ -58,6 +58,7 @@ class Converter:
         self.thread_lock = threading.Lock()
         self.image_client = image_client
         self.job_ttl_seconds = job_ttl_seconds
+        self.main_event_loop = main_event_loop
 
     def submit(self, src_path: str, filename: str, album_id: Optional[str] = None, album_client=None) -> str:
         
@@ -95,17 +96,14 @@ class Converter:
 
                 main_img.save(dist_path, 'WEBP', quality=100)
 
-                if self.image_client:
+                if self.image_client and self.main_event_loop:
                     logger.info("Starting GridFS upload")
-                    loop = asyncio.new_event_loop()
-                    asyncio.set_event_loop(loop)
-                    try:
-                        main_id = loop.run_until_complete(
-                            self.image_client.uploadFileToBucket(dist_path, f"{filename}.webp")
-                        )
-                        job.main_image.gridfs_id = main_id
-                    finally:
-                        loop.close()
+                    future = asyncio.run_coroutine_threadsafe(
+                        self.image_client.uploadFileToBucket(dist_path, f"{filename}.webp"),
+                        self.main_event_loop
+                    )
+                    main_id = future.result()
+                    job.main_image.gridfs_id = main_id
 
                 job.main_image.status = Status.SUCCESS
                 job.main_image.completed_at = time.time()
@@ -146,20 +144,17 @@ class Converter:
 
                 thumb_final.save(thumbnail_path, 'WEBP', quality=100)
 
-                if self.image_client:
+                if self.image_client and self.main_event_loop:
                     while job.main_image.gridfs_id is None and job.main_image.status == Status.PROCESS:
                         time.sleep(0.1)  # poll in every 100ms
 
                     if job.main_image.gridfs_id:
-                        loop = asyncio.new_event_loop()
-                        asyncio.set_event_loop(loop)
-                        try:
-                            thumb_id = loop.run_until_complete(
-                                self.image_client.uploadFileToBucket(thumbnail_path, f"thumbnail_{job.main_image.gridfs_id}.webp")
-                            )
-                            job.thumbnail.gridfs_id = thumb_id
-                        finally:
-                            loop.close()
+                        future = asyncio.run_coroutine_threadsafe(
+                            self.image_client.uploadFileToBucket(thumbnail_path, f"thumbnail_{job.main_image.gridfs_id}.webp"),
+                            self.main_event_loop
+                        )
+                        thumb_id = future.result()
+                        job.thumbnail.gridfs_id = thumb_id
                     else:
                         raise Exception("Main image processing failed.")
 
@@ -186,14 +181,13 @@ class Converter:
             main_future.result()
             thumb_future.result()
 
-            if album_id and album_client and job.main_image.gridfs_id and job.thumbnail.gridfs_id:
-
-                loop = asyncio.new_event_loop()
-                asyncio.set_event_loop(loop)
+            if album_id and album_client and job.main_image.gridfs_id and job.thumbnail.gridfs_id and self.main_event_loop:
                 try:
-                    result = loop.run_until_complete(
-                        album_client.addImageToAlbum(album_id, job.main_image.gridfs_id, job.thumbnail.gridfs_id)
+                    future = asyncio.run_coroutine_threadsafe(
+                        album_client.addImageToAlbum(album_id, job.main_image.gridfs_id, job.thumbnail.gridfs_id),
+                        self.main_event_loop
                     )
+                    result = future.result()
 
                     if result.status:
                         job.album_association = AlbumAssociationStatus(associated=True)
@@ -201,8 +195,6 @@ class Converter:
                         job.album_association = AlbumAssociationStatus(associated=False, error_message=result.message)
                 except Exception as e:
                     job.album_association = AlbumAssociationStatus(associated=False, error_message=str(e))
-                finally:
-                    loop.close()
 
             try:
                 if os.path.exists(src_path):

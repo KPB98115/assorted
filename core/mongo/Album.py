@@ -32,12 +32,12 @@ class AlbumClient(BaseMongoClient):
                 return AlbumOperationResult(status=False, message="Album already exist")
 
             album = Album(
-                _id=None,
+                id=None,
                 name=name,
                 create_date=datetime.now(),
                 content=[]
             )
-            record = await self.collection.insert_one(album.model_dump())
+            record = await self.collection.insert_one(album.model_dump(by_alias=True))
             return AlbumOperationResult(status=True, message=str(record.inserted_id))
         except Exception as e:
             return AlbumOperationResult(status=False, message=str(e))
@@ -94,12 +94,18 @@ class AlbumClient(BaseMongoClient):
     async def getAlbumById(self, id: str) -> Optional[Album]:
         album = await self.collection.find_one({"_id": ObjectId(id)})
         if album:
+            # Convert ObjectId to string for Pydantic model
+            if '_id' in album and album['_id'] is not None:
+                album['_id'] = str(album['_id'])
             return Album(**album)
         return None
 
     async def getAlbumByName(self, name: str) -> Optional[Album]:
         album = await self.collection.find_one({"name": name})
         if album:
+            # Convert ObjectId to string for Pydantic model
+            if '_id' in album and album['_id'] is not None:
+                album['_id'] = str(album['_id'])
             return Album(**album)
         return None
 
@@ -107,5 +113,7 @@ class AlbumClient(BaseMongoClient):
         albums = []
         cursor = self.collection.find({})
         async for album_doc in cursor:
+            if '_id' in album_doc and album_doc['_id'] is not None:
+                album_doc['_id'] = str(album_doc['_id'])
             albums.append(Album(**album_doc))
         return albums

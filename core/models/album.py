@@ -1,4 +1,4 @@
-from pydantic import BaseModel
+from pydantic import BaseModel, ConfigDict, Field
 from typing import Optional, Tuple
 from datetime import datetime
 
@@ -19,7 +19,9 @@ class ImagePair(BaseModel):
     thumbnail_id: str
 
 class Album(BaseModel):
-    _id: Optional[str] = None
+    model_config = ConfigDict(populate_by_name=True, json_encoders={datetime: lambda v: v.isoformat()})
+
+    id: Optional[str] = Field(None, alias="_id", serialization_alias="id")
     name: str
     create_date: datetime
     content: list[ImagePair]

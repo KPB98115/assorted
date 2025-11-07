@@ -20,7 +20,7 @@ async def create(request: Request, album_data: AlbumCreateRequest) -> AlbumCreat
     return result
 
 @router.post(f"/get")
-async def get(request: Request, album_data: AlbumGetRequest) -> Album:
+async def get(album_data: AlbumGetRequest, request: Request) -> Album:
     result = await get_album(album_data, request)
     if result is None:
         raise HTTPException(status_code=500, detail="Fail to get album")

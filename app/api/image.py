@@ -1,38 +1,37 @@
 from fastapi import APIRouter, Form, UploadFile, File, HTTPException, Request
 from fastapi.responses import StreamingResponse
 from typing import Annotated
-from uuid import UUID
 
-from core.models.image import AllowedImageFormat, UploadImageParams, DeleteImageParams, GetImageParams
+from core.models.image import AllowedImageFormat, UploadImageParams, DeleteImageParams, GetImageParams, GetThumbnailParams
 from core.helper.image import upload_image, delete_image, get_image, get_thumbnail
-from core.helper.converter import Job, Status
+from core.helper.converter import Job
 
 router = APIRouter()
 
 @router.post("/upload")
-async def upload(request: Request, album_id: Annotated[UUID, Form()], image: Annotated[UploadFile, File()]):
+async def upload(request: Request, album_id: Annotated[str, Form()], image: Annotated[UploadFile, File()]):
     if image.content_type not in AllowedImageFormat:
         raise HTTPException(status_code=400, detail=f"Unsupport file type: {image.content_type}")
 
-    return await upload_image(UploadImageParams(album_id, image), request)
+    return await upload_image(UploadImageParams(album_id=album_id, image=image), request)
 
 @router.post("/delete")
-async def delete(request: Request, album_id: UUID, image_id: str):
-    result = await delete_image(DeleteImageParams(album_id, image_id), request)
+async def delete(request: Request, params: DeleteImageParams):
+    result = await delete_image(params, request)
     if not result:
         raise HTTPException(status_code=400, detail="Failed to delete image")
     return {"message": "Image deleted successfully"}
 
 @router.post("/get")
-async def get(request: Request, album_id: UUID, image_id: str):
-    result = await get_image(GetImageParams(album_id, image_id), request)
+async def get(request: Request, params: GetImageParams):
+    result = await get_image(params, request)
     if isinstance(result, StreamingResponse):
         return result
     raise HTTPException(status_code=404, detail="Image not found")
 
 @router.post("/thumbnail/get")
-async def get_thumbnail_endpoint(request: Request, thumbnail_id: str):
-    result = await get_thumbnail(thumbnail_id, request)
+async def get_thumbnail_endpoint(request: Request, params: GetThumbnailParams):
+    result = await get_thumbnail(params.thumbnail_id, request)
     if isinstance(result, StreamingResponse):
         return result
     raise HTTPException(status_code=404, detail="Thumbnail not found")

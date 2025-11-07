@@ -19,3 +19,6 @@ class GetImageParams(BaseModel):
     album_id: str
     image_id: str
 
+class GetThumbnailParams(BaseModel):
+    thumbnail_id: str
+

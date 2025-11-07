@@ -35,7 +35,7 @@ async def get_album(album_data: AlbumGetRequest, request: Request) -> Optional[A
             logger.warning(f"Album not found")
             return None
 
-        logger.info(f"Get album success: {album._id}")
+        logger.info(f"Get album success: {album.id}")
         return album
 
     except Exception as e:
