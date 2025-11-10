@@ -14,6 +14,7 @@
    1. https://leetcode.com/problems/find-common-characters/description/
       a: https://leetcode.com/problems/find-common-characters/submissions/1825278714
    2. https://leetcode.com/problems/count-the-number-of-good-nodes/description/
+      a: https://leetcode.com/problems/count-the-number-of-good-nodes/submissions/1826121433/ (DNF)
    3. https://leetcode.com/problems/first-missing-positive/description/
 
 # Notes
