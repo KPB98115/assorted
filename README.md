@@ -16,6 +16,7 @@
    2. https://leetcode.com/problems/count-the-number-of-good-nodes/description/
       a: https://leetcode.com/problems/count-the-number-of-good-nodes/submissions/1826121433/ (DNF)
    3. https://leetcode.com/problems/first-missing-positive/description/
+      a: https://leetcode.com/problems/first-missing-positive/submissions/1827072513 (DNF)
 
 # Notes
 
