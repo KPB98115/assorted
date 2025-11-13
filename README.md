@@ -1,6 +1,7 @@
 # Assorted
 
 1. Web + iOS + Android + Backend for a photo album
+
    1. Create an album
    2. Upload images to the album
    3. Convert images to webp formats:
@@ -10,6 +11,18 @@
    4. View album's image thumbnails and enlarged version when clicked
    5. Delete a single image in an album
    6. Delete an album
+
+   # Usage
+
+   ```bash
+    docker compose up
+   ```
+
+   # Demo
+
+   - [Web demo](https://youtu.be/KgrUGN3wmwY)
+   - [Mobile demo](https://youtube.com/shorts/PIWyiIpn-OI?feature=share)
+
 2. LeetCode
    1. https://leetcode.com/problems/find-common-characters/description/
       a: https://leetcode.com/problems/find-common-characters/submissions/1825278714
