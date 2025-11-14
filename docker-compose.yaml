@@ -44,6 +44,22 @@ services:
       # Mount /tmp for temporary file storage during image conversion
       - /tmp:/tmp
 
+  # Vue.js frontend service
+  frontend:
+    build:
+      context: ./album_web_app
+      dockerfile: Dockerfile
+    container_name: album_frontend
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    environment:
+      BACKEND_URL: http://backend:8000
+    depends_on:
+      - backend
+    networks:
+      - album_network
+
 networks:
   album_network:
     driver: bridge
