@@ -13,21 +13,25 @@
    6. Delete an album
 
    # Usage
+   (0) Ensure the volumn is removed
+   ```bash
+      docker compose down -v
+   ```
 
-   1. Launch the service
+   (1) Launch the service
 
    ```bash
     docker compose up -d
    ```
 
-   2. visit http://localhost:3000
+   (2) visit http://localhost:3000
 
    # Demo
 
    - [Web demo](https://youtu.be/KgrUGN3wmwY)
    - [Mobile demo](https://youtube.com/shorts/PIWyiIpn-OI?feature=share)
 
-2. LeetCode
+3. LeetCode
    1. https://leetcode.com/problems/find-common-characters/description/
       a: https://leetcode.com/problems/find-common-characters/submissions/1825278714
 
